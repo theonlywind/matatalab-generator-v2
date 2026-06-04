@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <title>Matatalab Export Render</title>
+    <style>
+      html,
+      body {
+        width: 2480px;
+        height: 1754px;
+        margin: 0;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .hidden-controls {
+        position: absolute;
+        left: -10000px;
+        top: -10000px;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      #card-preview {
+        display: block;
+        width: 2480px;
+        height: 1754px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="card-preview" width="2480" height="1754"></canvas>
+    <div id="card-preview-overlay" hidden></div>
+    <div class="hidden-controls">
+      <input id="q-label" />
+      <input id="p-label" />
+      <div id="drag-palette"></div>
+      <p id="generator-status"></p>
+      <button id="reset-card"></button>
+      <button id="download-png"></button>
+      <button id="download-pdf"></button>
+    </div>
+    <script src="./assets/vendor/pdf-export.js"></script>
+    <script src="./generator.js"></script>
+    <script>
+      async function bootExportRender() {
+        const params = new URLSearchParams(location.search);
+        const stateFile = params.get("state");
+        if (!stateFile) throw new Error("Missing state file");
+
+        while (!window.loadCardState) {
+          await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+
+        const response = await fetch(`./exports/${stateFile}`);
+        if (!response.ok) throw new Error(`State load failed: ${response.status}`);
+        window.loadCardState(await response.json());
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+        const ready = document.createElement("div");
+        ready.id = "export-ready";
+        ready.textContent = "ready";
+        ready.style.cssText = "position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0.01;";
+        document.body.appendChild(ready);
+      }
+
+      bootExportRender().catch((error) => {
+        document.body.dataset.exportError = error.message;
+      });
+    </script>
+  </body>
+</html>

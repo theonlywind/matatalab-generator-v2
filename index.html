@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Matatalab 題卡生成器</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="generator-shell">
+      <header class="generator-hero">
+        <div>
+          <p class="eyebrow">Matatalab Challenge Card Builder</p>
+          <h1>題卡生成器</h1>
+          <p class="generator-copy">手動設定 P / Q、起點、旗仔、障礙與面向，然後下載 A4 橫向題目卡。</p>
+        </div>
+        <div class="generator-hero-actions">
+          <a class="ghost-button" href="./index.html">返回 Adventure Rebuild</a>
+        </div>
+      </header>
+
+      <main class="generator-workspace">
+        <aside class="generator-sidebar panel">
+          <section class="generator-card">
+            <div class="section-head">
+              <div>
+                <p class="section-label">使用說明</p>
+                <strong>簡短操作</strong>
+              </div>
+            </div>
+            <ol class="instruction-list">
+              <li>先輸入或選擇 <code>Q / P</code>。</li>
+              <li>可把左邊圖示拖到右邊 A4 預覽卡直接排位。</li>
+              <li>也可直接拖動預覽卡上的起點、藍旗、紅旗和障礙去新位置。</li>
+              <li>起點卡下方可直接設定 Bot 面向。</li>
+              <li>完成後下載 <code>PDF</code> 或 <code>PNG</code>。</li>
+            </ol>
+          </section>
+
+          <section class="generator-card">
+            <div class="section-head">
+              <div>
+                <p class="section-label">題卡資料</p>
+                <strong>P / Q 設定</strong>
+              </div>
+            </div>
+            <div class="meta-grid">
+              <label class="meta-field">
+                <span>Q</span>
+                <input id="q-label" list="q-options" value="Q1" maxlength="10" />
+              </label>
+              <label class="meta-field">
+                <span>P</span>
+                <input id="p-label" list="p-options" value="P1" maxlength="10" />
+              </label>
+            </div>
+            <datalist id="q-options">
+              <option value="Q1"></option>
+              <option value="Q2"></option>
+              <option value="Q3"></option>
+            </datalist>
+            <datalist id="p-options">
+              <option value="P1"></option>
+              <option value="P2"></option>
+              <option value="P3"></option>
+            </datalist>
+          </section>
+
+          <section class="generator-card">
+            <div class="section-head">
+              <div>
+                <p class="section-label">拖拉圖示</p>
+                <strong>直接拖去預覽卡</strong>
+              </div>
+            </div>
+            <div id="drag-palette" class="drag-palette"></div>
+            <p class="drag-palette-tip">把圖示拖到右邊地圖格中央或格邊，即可設定位置。</p>
+          </section>
+
+          <section class="generator-card">
+            <div class="section-head">
+              <div>
+                <p class="section-label">匯出</p>
+                <strong>下載檔案</strong>
+              </div>
+            </div>
+            <div class="generator-actions">
+              <button id="reset-card" class="secondary-button">重設題卡</button>
+              <button id="download-png" class="ghost-button">Download PNG</button>
+              <button id="download-pdf" class="primary-button">Download PDF</button>
+            </div>
+            <p id="generator-status" class="generator-status">Ready</p>
+          </section>
+        </aside>
+
+        <section class="generator-preview panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">A4 預覽</p>
+              <strong>Landscape Card Preview · 可直接修改</strong>
+            </div>
+          </div>
+          <div class="preview-frame">
+            <div id="card-preview-stage" class="card-preview-stage">
+              <canvas id="card-preview" width="1414" height="1000" aria-label="題卡預覽"></canvas>
+              <div id="card-preview-overlay" class="card-preview-overlay" aria-hidden="true"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./assets/vendor/pdf-export.js"></script>
+    <script src="./generator.js"></script>
+  </body>
+</html>
