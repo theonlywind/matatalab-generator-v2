@@ -69,6 +69,7 @@ const PREVIEW_SCALE_X = PREVIEW_SIZE.width / EXPORT_SIZE.width;
 const PREVIEW_SCALE_Y = PREVIEW_SIZE.height / EXPORT_SIZE.height;
 const EXPORT_HELPER_ENDPOINT = `${location.protocol}//${location.hostname}:8125/save-export`;
 const RENDER_HELPER_ENDPOINT = `${location.protocol}//${location.hostname}:8125/render-export`;
+const LOCAL_HELPER_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
 function setStatus(text, tone = "") {
   const node = $("#generator-status");
@@ -1363,6 +1364,10 @@ function bytesToBase64(bytes) {
   return btoa(binary);
 }
 
+function isLocalHelperAvailable() {
+  return LOCAL_HELPER_HOSTS.has(location.hostname);
+}
+
 async function saveBlobViaHelper(blob, filename) {
   const bytes = new Uint8Array(await blob.arrayBuffer());
   const response = await fetch(EXPORT_HELPER_ENDPOINT, {
@@ -1382,6 +1387,12 @@ async function saveBlobViaHelper(blob, filename) {
 }
 
 async function saveExportBlob(blob, filename, successLabel) {
+  if (!isLocalHelperAvailable()) {
+    downloadBlob(blob, filename);
+    setStatus(`${successLabel} 已下載`);
+    return;
+  }
+
   try {
     const saved = await saveBlobViaHelper(blob, filename);
     downloadFromUrl(saved.downloadUrl, filename);
@@ -1414,6 +1425,11 @@ async function renderExportViaHelper(format, filename) {
 }
 
 async function exportViaHelperFirst(format, filename, successLabel, clientFallback) {
+  if (!isLocalHelperAvailable()) {
+    await clientFallback();
+    return;
+  }
+
   try {
     const saved = await renderExportViaHelper(format, filename);
     downloadFromUrl(saved.downloadUrl, filename);
